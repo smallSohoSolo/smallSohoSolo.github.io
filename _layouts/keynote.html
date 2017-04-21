@@ -56,6 +56,21 @@ layout: default
                 col-md-10 col-md-offset-1 ">
                 {{ content }}
                 <hr>
+                <ul class="pager">
+                    {% if page.previous.url %}
+                    <li class="previous">
+                        <a href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}"
+                           data-toggle="tooltip" data-placement="top" title="{{page.previous.title}}">&larr; Previous
+                            Post</a>
+                    </li>
+                    {% endif %}
+                    {% if page.next.url %}
+                    <li class="next">
+                        <a href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip"
+                           data-placement="top" title="{{page.next.title}}">Next Post &rarr;</a>
+                    </li>
+                    {% endif %}
+                </ul>
                 {% if site.livere_uid %}
                 <!-- 来必力City版安装代码 -->
                 <div class="comment">
@@ -85,27 +100,26 @@ layout: default
                 <!-- disqus 评论框 start -->
                 <div class="comment">
                     <div id="disqus_thread" class="disqus-thread">
+                        <!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+                        <script type="text/javascript">
+                            /* * * CONFIGURATION VARIABLES * * */
+                            var disqus_shortname = "{{site.disqus_username}}";
+                            var disqus_identifier = "{{page.id}}";
+                            var disqus_url = "{{site.url}}{{page.url}}";
 
+                            (function () {
+                                var dsq = document.createElement('script');
+                                dsq.type = 'text/javascript';
+                                dsq.async = true;
+                                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                            })();
+                        </script>
+                        <!-- disqus 公共JS代码 end -->
                     </div>
                 </div>
                 <!-- disqus 评论框 end -->
                 {% endif %}
-                <ul class="pager">
-                    {% if page.previous.url %}
-                    <li class="previous">
-                        <a href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}"
-                           data-toggle="tooltip" data-placement="top" title="{{page.previous.title}}">&larr; Previous
-                            Post</a>
-                    </li>
-                    {% endif %}
-                    {% if page.next.url %}
-                    <li class="next">
-                        <a href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip"
-                           data-placement="top" title="{{page.next.title}}">Next Post &rarr;</a>
-                    </li>
-                    {% endif %}
-                </ul>
-
             </div>
 
             <!-- Sidebar Container -->
@@ -167,25 +181,6 @@ layout: default
     })
     resize();
 </script>
-
-{% if site.disqus_username %}
-<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "{{site.disqus_username}}";
-    var disqus_identifier = "{{page.id}}";
-    var disqus_url = "{{site.url}}{{page.url}}";
-
-    (function () {
-        var dsq = document.createElement('script');
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus 公共JS代码 end -->
-{% endif %}
 
 {% if site.anchorjs %}
 <!-- async load function -->
