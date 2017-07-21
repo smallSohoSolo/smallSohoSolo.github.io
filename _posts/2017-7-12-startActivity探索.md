@@ -6,7 +6,7 @@ category: Android
 tag: Activity
 ---
 
-本篇博客代码基于aosp发表日期最新的repo master分支（Android 8.0 API 26）。可能会伴随很多源码，所以略显枯燥，源码已经被我手动精简带上注释。
+本篇博客代码基于aosp发表日期最新的repo master分支（API 25）。可能会伴随很多源码，所以略显枯燥，源码已经被我手动精简带上注释。
 
 ### 如何启动Activity?
 
