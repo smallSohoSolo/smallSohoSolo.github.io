@@ -97,6 +97,12 @@ uploadArchives {
         }
     }
 }
+
+compileGroovy {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+    options.encoding = "UTF-8"
+}
 ```
 
 此处我们在项目的根目录下先手动创建一个目录名称为maven，我们知道gradle的包管理都是存储在maven仓库中的，我们这里定义一个本地的maven仓库，首先我们打包到本地的maven仓库，然后在主项目中依赖我们打包好的包。
@@ -189,11 +195,3 @@ public class PluginMain implements Plugin<Project> {
 ```
 
 成功输出了我们在Gradle中定义的变量。
-
-
-
-
-
-
-
-
