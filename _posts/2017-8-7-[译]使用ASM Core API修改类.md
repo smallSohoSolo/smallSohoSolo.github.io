@@ -415,7 +415,7 @@ public class RemoveMethodAdapter extends ClassVisitor {
 
 如果是在visitEnd函数中添加变量总会添加成功（除非你有明确的限制），因为这个方法总会被调用。如果你放倒visitField或者visitMethod中，多个变量将会被加入到类中：在原类中的每个方法或变量中。这两个方案都可以实现，取决于你的需求。（PS：在ClassVisitor一次完整的扫描中，visitXXX会被调用多次，但是visitEnd就能被调用一次）。
 
-**Note：**事实上，常用的解决方案是在visitEnd中添加新的成言。一个类一定不能含有相同的成员，唯一可以确保这个成员和现存的成员不冲突的方法就是只在visitEnd方法中调用一次去创建。创建的时候使用的名称最好不要像常见的名称，例如可以起个\_counter$或者\_4B7F这样的名字以避免和现有的成员变量冲突。注意的是，在我们第一章讲述的内容中，使用tree API并没有这个限制，因为它可以在整个转换中随时添加新的成员。
+**Note：**事实上，常用的解决方案是在visitEnd中添加新的成员。一个类一定不能含有相同的成员，唯一可以确保这个成员和现存的成员不冲突的方法就是只在visitEnd方法中调用一次去创建。创建的时候使用的名称最好不要像常见的名称，例如可以起个\_counter$或者\_4B7F这样的名字以避免和现有的成员变量冲突。注意的是，在我们第一章讲述的内容中，使用tree API并没有这个限制，因为它可以在整个转换中随时添加新的成员。
 
 为了说明上面的结论，这里给出一个例子：
 
@@ -478,5 +478,128 @@ public class MultiClassAdapter extends ClassVisitor {
 
 对称的多个类适配器可以委托给相同的ClassVisitor（这需要一些措施去确保正确，比如visit和visitEnd函数都只会在这个ClassVisitor中被调用一次）。因此一个很棒的转换链将会在图2.8中展示。
 
-#### 工具类
+### 2.3. 工具类
+
+除了ClassVisitor和ClassReader还有ClassWriter组件，ASM在org.objectweb.asm.util包中提供了很多在开发时提供帮助的工具去初始化和适配一个类。ASM也提供了用于运行时操作内部名称，类型描述符和方法描述符的工具。所有这些工具如下所示。
+
+![](/img/2017-8-7/2-8.png)
+
+<center>图2.8 一个复杂的转换链</center>
+
+#### 2.3.1. 类型
+
+正如之前章节看到的，ASM API公开了存储在字节码中的类型，即内部名称和类型描述符。当然可以使用更加接近源码的方式去暴露它们，让它们有更好的可读性。但是这可能需要使用ClassReader和ClassWriter两个组件去进行系统转换，会导致效率变低。这就是为什么ASM没有透明的将内部名称和类型描述符转换成等价的源代码形式。然而ASM提供了Type类在必要的时候做这件事。
+
+一个Type对象代表一个Java类型，它可以从一个类型描述符活着一个Class对象构建获得。Type类也包含静态的表示原始类型的常量。例如Type.INT_TYPE是表示int类型的对象。
+
+getInternalName方法返回了一个Type的内部名称。例如，Type.getType(String.class).getInternalName()提供了String类的内部名称，即"java/lang/String"。这个方法只能被用于类和接口类型。
+
+getDescriptor方法返回了Type的描述符。所以，可以用Type.getType(String.class).getDescriptor()来替代“Ljava/lang/String;”，可以用Type.INT_TYPE.getDescriptor().代替I
+
+Type对象也可以表示一个方法类型。一个Type对象可以从一个方法描述符活着一个Method对象构建获得。getDescriptor方法会返回方法描述符的类型。此外，getArgumentTypes方法和getReturnType方法被用于从方法类型和方法返回类型构建Type对象。例如使用Type.getArgumentTypes("(I)V")返回的是Type.INT_TYPE，使用Type.getReturnType("(I)V")返回的是Type.VOID_TYPE对象。
+
+#### 2.3.2. TraceClassVisitor
+
+为了检查一个构建和转换的类是否符合你去往的，根据ClassWriter返回的byte数组是没法判断的，因为人类没法读这个。使用文字表示将会更加的易于理解。这就是TraceClassVisitor所提供的功能。这个类正如它的名字一样，继承自ClassVisitor类，并且对访问的类进行了一个文字表示。所以可以使用TraceClassVisitor类替代ClassVisitor，来获得一个实际生成的有可读性的堆栈。更好的是，你可以同时使用两者。事实上，除了TraceClassVisitor的独有方法，其他的方法都会调用内部的ClassWriter实例实现：
+
+```java
+ClassWriter cw = new ClassWriter(0);
+TraceClassVisitor cv = new TraceClassVisitor(cw, printWriter);
+cv.visit(...);
+...
+cv.visitEnd();
+byte b[] = cw.toByteArray();
+```
+
+这段代码创建了一个TraceClassVisitor去分发它接受到的所有的调用给cw，然后它打印了一个这些调用的文字表示使用printWriter。例如，在2.2.3例子中使用TraceClassVisitor将会打印出。
+
+```java
+// class version 49.0 (49)
+// access flags 1537
+public abstract interface pkg/Comparable implements pkg/Mesurable {
+// access flags 25
+public final static I LESS = -1
+// access flags 25
+public final static I EQUAL = 0
+// access flags 25
+public final static I GREATER = 1
+// access flags 1025
+public abstract compareTo(Ljava/lang/Object;)I
+}
+```
+
+注意，你可以在一个转换链中的任意一个点中使用TraceClassVisitor，而不仅仅是在一个ClassWriter之前，这样你就可以看到这个点发生了什么。注意可以使用类的String.equals()方法同TraceClassvisitor的输出进行比较。
+
+#### 2.3.3. CheckClassAdapter
+
+ClassWriter类并不能检查这个方法是否用正确的顺序和参数被调用。因此，可能会初始化一个错误的类从而被Java虚拟机验证拒绝。为了避免这些错误。可以使用CheckClassAdaoter类。就想TraceClassVisitor，这个类也继承自ClasVisitor，并且分发所有的请求给另一个ClassVisitor实例。这个类的作用是在分发给下一个visitor之前检查方法调用顺序和参数。如果出错，那么会抛出IllegalStateException或者IllegalArgumentException异常。
+
+为了检查一个类，打印这个类，最后获取这个类的byte数组，你可以这样做：
+
+```java
+ClassWriter cw = new ClassWriter(0);
+TraceClassVisitor tcv = new TraceClassVisitor(cw, printWriter);
+CheckClassAdapter cv = new CheckClassAdapter(tcv);
+cv.visit(...);
+...
+cv.visitEnd();
+byte b[] = cw.toByteArray();
+```
+
+注意，如果你使用其他的调用顺序，它们的结果表现也将会不同。例如，下面这个例子，检查将会发生在最后。
+
+```java
+ClassWriter cw = new ClassWriter(0);
+CheckClassAdapter cca = new CheckClassAdapter(cw);
+TraceClassVisitor cv = new TraceClassVisitor(cca, printWriter);
+```
+
+同TraceClasvisitor一样，你可以在转换链的任何地方使用它。
+
+#### 2.3.4. ASMifier
+
+这个类为TraceClassVisitor工具提供了一个备用的后端。（默认是Textifier提供输出类型）。这个后端能在方法调用的时候直接输出Java源代码。例如调用visitEnd()方法打印cv.visitEnd(); 结果是一段字节码，但是使用ASMifier替换之后，会打印Java源代码。这在你使用visitor访问一个已经存在的class的时候会很有用。例如，如果你并不知道如何使用初始化编译好的类，你可以写下这个类的源码，然后使用javac编译，之后使用ASMifier访问编译好的类，你会获取到初始化这个字节码的ASM代码！
+
+ASMifier类可以使用下面的命令行来调用。
+
+```shell
+java -classpath asm.jar:asm-util.jar \
+  org.objectweb.asm.util.ASMifier \
+  java.lang.Runnable
+```
+
+之后会产生出下面的代码：
+
+```java
+package asm.java.lang;
+import org.objectweb.asm.*;
+public class RunnableDump implements Opcodes {
+    public static byte[] dump() throws Exception {
+        ClassWriter cw = new ClassWriter(0);
+        FieldVisitor fv;
+        MethodVisitor mv;
+        AnnotationVisitor av0;
+        cw.visit(V1_5, ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE,
+            "java/lang/Runnable", null, "java/lang/Object", null); 
+        {
+            mv = cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT, "run", "()V", null, null);
+            mv.visitEnd();
+        }
+        cw.visitEnd();
+        return cw.toByteArray();
+    }
+}
+```
+
+PS: 一个可以帮你生成ASM代码的工具类，如果你不知道怎么写，可以用这个工具类来获取代码。
+
+## 3. Methods
+
+这一章节介绍如何使用核心ASM API修改和构造方法。开始介绍已经编译的方法结构，之后介绍如何使用ASM接口，组件，工具去修改和构造他们，并且有很多例子。
+
+### 3.1. 结构
+
+在字节码中，方法的代码被存储为一段bytecode指令序列。想要构建和修改类的方法首先你需要了解他们基本的运作方式。这个章节给出了这些指令的概览，足够我们了解之后去开始编写简单的类构造和转换代码。完整的介绍请阅读Java虚拟机规范。
+
+#### 3.1.1. 执行单元
 
