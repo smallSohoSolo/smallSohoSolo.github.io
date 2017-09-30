@@ -39,14 +39,6 @@ kramdown:
   input: GFM                            # use Github Flavored Markdown !important
 
 
-
-# Disqus settings
-#disqus_username: _your_disqus_short_name_
-
-# livere
-livere_uid: 'MTAyMC8yNzk2MS80NTM4'
-
-
 # Analytics settings
 # Google Analytics
 ga_track_id: 'UA-63276975-1'            # Format: UA-xxxxxx-xx
