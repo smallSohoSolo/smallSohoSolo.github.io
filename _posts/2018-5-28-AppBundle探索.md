@@ -24,6 +24,16 @@ AppBundle将这些特性在多个维度进行拆分，在资源维度，ABI维�
 - Configuration Split Apk: 构造apk，区分的维度是[Multiple Apks](https://developer.android.com/studio/build/configure-apk-splits)的划分。用来拼装Dynamic Feature Apks和Base Apk的配置。
 - Dynamic Feature Apk: 动态特性Apk，这是组件化的一个好的新方案，通过动态下发模块来做到功能的动态更新
 
+### bundletool工具
+
+当你选择将App打包成.aab（Android App Bundle）的后缀文件之后，如何测试你的Apk是否可用，bundletool工具正是用来处理这个aab文件的。
+
+Github：https://github.com/google/bundletool
+
+使用方法：https://developer.android.com/guide/app-bundle/test
+
+bundletool是google推出的开源工具，使用方法十分简单，使用几行命令就可以获取出针对相应设备的Apk，也可以一键进行安装，签名等操作。Google Play也是使用bundletool来进行aab解包分发给不同的设备的。
+
 ### 兼容性问题
 
 Api < 21的手机无法进行模块化，Google Play会对其进行[Multiple Apks](https://developer.android.com/studio/build/configure-apk-splits)操作来进行下发操作。
@@ -57,5 +67,6 @@ Api < 21的手机无法进行模块化，Google Play会对其进行[Multiple Apk
 1. 当打开on-demand（按需加载）时，必须开启Fusing（熔断操作）才能正常的让Api21以下的手机使用module
 2. 一般情况下，动态模块下发之后需要重启App才能加载成功，但是如果你使用SplitCompat library，就可以立即生效，[Access code and resources from downloaded modules](https://developer.android.com/guide/app-bundle/playcore#access_downloaded_modules)
 3. 如果下载的模块太大，需要用户确认，GP要求大于10MB需要用户确认
-4. module中的AndroidManifest中定义的Activity不能有exported:true因为别的app不知道你何时安装好模块从而会引发问题
-5. proguard文件在生效的时候会merge base module和所有的dynamic module中的文件，所以在编写proguard的时候要注意这个问题。
+4. 国际上可以使用Google Play的Play Core Lib直接从gp后台下载我们上传好的dynamic module.
+5. module中的AndroidManifest中定义的Activity不能有exported:true因为别的app不知道你何时安装好模块从而会引发问题
+6. proguard文件在生效的时候会merge base module和所有的dynamic module中的文件，所以在编写proguard的时候要注意这个问题。
