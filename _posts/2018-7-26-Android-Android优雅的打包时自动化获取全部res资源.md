@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Android Hook打包流程获取全部res资源"
+title: "Android优雅的打包时自动化获取全部res资源"
 date: 2018-7-26
 category: Android
 tag: gradle
