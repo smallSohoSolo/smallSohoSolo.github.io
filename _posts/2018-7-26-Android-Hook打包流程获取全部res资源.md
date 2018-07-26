@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Android优雅的打包时自动化获取全部res资源"
+title: "Android Hook打包流程获取全部res资源"
 date: 2018-7-26
 category: Android
 tag: gradle
@@ -59,7 +59,7 @@ Hook打包流程会引来几个问题，由于android gradle 2.X 到 3.X的转�
 
 这里分成几个部分，先说一下
 
-##### gradle 3.3版本
+#### gradle 3.3版本
 
 之前的版本怎么解决。这里看了下最新版本的gradle的更新
 
@@ -67,7 +67,7 @@ Hook打包流程会引来几个问题，由于android gradle 2.X 到 3.X的转�
 
 很开心，最新版本的更新日志告诉我们，为了让Kotlin适配Android Res资源，3.3之后的gradle会在mergedResources中暴露一个getRawAndroidResources()方法，这样就能一次性拿到所有的资源文件了。皆大欢喜。
 
-##### gradle3.0 - gradle 3.3之间的版本
+#### gradle3.0 - gradle 3.3之间的版本
 
 两种解决方案，一种是关掉AAPT2，3.3版本之前是可以在gradle.properties中填写
 
