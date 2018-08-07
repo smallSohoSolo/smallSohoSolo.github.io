@@ -1,4 +1,6 @@
---- layout: default ---
+---
+layout: default
+---
 
 <!-- Image to hack wechat -->
 <!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
@@ -21,12 +23,13 @@
                         {% endfor %}
                     </div>
                     <h1>{{ page.title }}</h1>
-                    {% comment %} always create a h2 for keeping the margin , Hux {% endcomment %} {% comment %} if page.subtitle {% endcomment
-                    %}
+                    {% comment %}
+                    always create a h2 for keeping the margin , Hux
+                    {% endcomment %}
+                    {% comment %} if page.subtitle {% endcomment %}
                     <h2 class="subheading">{{ page.subtitle }}</h2>
                     {% comment %} endif {% endcomment %}
-                    <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} on {{ page.date
-                        | date: "%B %-d, %Y" }}</span>
+                    <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} on {{ page.date | date: "%B %-d, %Y" }}</span>
                 </div>
             </div>
         </div>
@@ -51,16 +54,38 @@
                 <ul class="pager">
                     {% if page.previous.url %}
                     <li class="previous">
-                        <a href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip" data-placement="top"
-                            title="{{page.previous.title}}">&larr; Previous Post
-                        </a>
+                        <a href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}"
+                           data-toggle="tooltip" data-placement="top" title="{{page.previous.title}}">&larr; Previous
+                            Post</a>
                     </li>
-                    {% endif %} {% if page.next.url %}
+                    {% endif %}
+                    {% if page.next.url %}
                     <li class="next">
-                        <a href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip" data-placement="top" title="{{page.next.title}}">Next Post &rarr;</a>
+                        <a href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip"
+                           data-placement="top" title="{{page.next.title}}">Next Post &rarr;</a>
                     </li>
                     {% endif %}
                 </ul>
+                <!-- 来必力City版安装代码 -->
+                <div id="lv-container" data-id="city" data-uid="Mi8xLzM=">
+                    <script type="text/javascript">
+                        (function (d, s) {
+                            var j, e = d.getElementsByTagName(s)[0];
+
+                            if (typeof LivereTower === 'function') {
+                                return;
+                            }
+
+                            j = d.createElement(s);
+                            j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                            j.async = true;
+
+                            e.parentNode.insertBefore(j, e);
+                        })(document, 'script');
+                    </script>
+                    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+                </div>
+                <!-- City版安装代码已完成 -->
             </div>
 
             <!-- Sidebar Container -->
@@ -73,15 +98,16 @@
                 {% if site.featured-tags %}
                 <section>
                     <hr class="hidden-sm hidden-xs">
-                    <h5>
-                        <a href="/tags/">FEATURED TAGS</a>
-                    </h5>
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
-                        {% for tag in site.tags %} {% if tag[1].size > {{site.featured-condition-size}} %}
-                        <a href="{{ site.baseurl }}/tags/#{{ tag[0] }}" title="{{ tag[0] }}" rel="{{ tag[1].size }}">
+                        {% for tag in site.tags %}
+                        {% if tag[1].size > {{site.featured-condition-size}} %}
+                        <a href="{{ site.baseurl }}/tags/#{{ tag[0] }}" title="{{ tag[0] }}"
+                           rel="{{ tag[1].size }}">
                             {{ tag[0] }}
                         </a>
-                        {% endif %} {% endfor %}
+                        {% endif %}
+                        {% endfor %}
                     </div>
                 </section>
                 {% endif %}
@@ -92,9 +118,7 @@
                 <h5>FRIENDS</h5>
                 <ul class="list-inline">
                     {% for friend in site.friends %}
-                    <li>
-                        <a href="{{friend.href}}">{{friend.title}}</a>
-                    </li>
+                    <li><a href="{{friend.href}}">{{friend.title}}</a></li>
                     {% endfor %}
                 </ul>
                 {% endif %}
@@ -107,9 +131,8 @@
 {% if site.anchorjs %}
 <!-- async load function -->
 <script>
-    function async (u, c) {
-        var d = document,
-            t = 'script',
+    function async(u, c) {
+        var d = document, t = 'script',
             o = d.createElement(t),
             s = d.getElementsByTagName(t)[0];
         o.src = u;
@@ -123,7 +146,7 @@
 </script>
 <!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
 <script>
-    async ("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js", function () {
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js", function () {
         anchors.options = {
             visible: 'always',
             placement: 'right',
@@ -134,7 +157,6 @@
 </script>
 <style>
     /* place left on bigger screen */
-
     @media all and (min-width: 800px) {
         .anchorjs-link {
             position: absolute;
