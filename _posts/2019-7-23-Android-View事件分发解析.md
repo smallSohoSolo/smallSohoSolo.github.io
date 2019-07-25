@@ -20,6 +20,7 @@ typora-root-url: ..
 3. 如果事件被消费了，后续的事件都会按照最短路线传给消费的View。
 4. onTouchListener > onTouchEvent > onLongClickListener > onClickListener消费顺序
 5. 子View可以调用requestDisallowInterceptTouchEvent 方法进行设置，从而阻止父 ViewGroup的onInterceptTouchEvent 拦截事件，强制返回false。
-6. dispatch必须调用super方法，否则后面的事件无法连续的被分发，原因是dispatch是分发事件用的，或者你可以手写分发
-7. intercept 和 touch 可以不调用super，不会影响事件分发
-8. 如果一个ACTION_DOWN被其他View消费，后续事件被父布局（必须是ViewGroup）的InterceptTouchEvent 返回 true，那么会出现一个ACTION_CANCEL 发送给之前消费的View或者ViewGroup
+6. dispatch必须调用super方法，否则后面的事件无法连续的被分发，原因是dispatch是分发事件用的，或者你可以手写分发。
+7. intercept 和 touch 可以不调用super，不会影响事件分发。
+8. 如果一个ACTION_DOWN被其他View消费，后续事件被父布局（必须是ViewGroup）的InterceptTouchEvent 返回 true，那么会出现一个ACTION_CANCEL 发送给之前消费的View或者ViewGroup。
+9. ViewGroup 的 onInterceptTouchEvent 一旦返回true 拦截之后，后续的事件就不会传给这个方法了，直接跳过传给onTouchEvent。
